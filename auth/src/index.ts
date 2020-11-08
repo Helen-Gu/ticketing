@@ -18,20 +18,27 @@ app.use(signinRouter);
 app.use(signoutRouter);
 app.use(signupRouter);
 
-app.all('*', async () => {
+app.all('*', async (req, res) => {
 	throw new NotFoundError();
 });
 
 app.use(errorHandler);
 
 const start = async () => {
-	await mongoose.connect('mongodb://auth-mongo-srv:27017/auth', {
-		useNewUrlParser: true,
-		useUnifiedTopology true,
-		useCreateIndex true,
+	try {
+		await mongoose.connect('mongodb://auth-mongo-srv:27017/auth', {
+			useNewUrlParser: true,
+			useUnifiedTopology: true,
+			useCreateIndex: true,
+		});
+		console.log('Connected to MongoDb');
+	} catch (err) {
+		console.error(err);
+	}
+
+	app.listen(3000, () => {
+		console.log('Listening on port 3000!!!!!!!!');
 	});
 };
 
-app.listen(3000, () => {
-	console.log('Listening on port 3000!!!!!!!!');
-});
+start();
